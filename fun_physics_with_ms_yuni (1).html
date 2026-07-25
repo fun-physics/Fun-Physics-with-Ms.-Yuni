@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Physics with Ms. Yuni</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Poppins:wght@700;800&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#0A2540',
+                        physicsBlue: '#1E88E5',
+                        energyRed: '#E53935',
+                        electricYellow: '#FFC107',
+                        lightGray: '#F5F7FA'
+                    },
+                    fontFamily: {
+                        heading: ['Poppins', 'sans-serif'],
+                        body: ['Open Sans', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(229, 57, 53, 0.7)' },
+                            '50%': { boxShadow: '0 0 0 10px rgba(229, 57, 53, 0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #F5F7FA;
+            color: #0A2540;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .formula-font {
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        /* Hero Background Pattern */
+        .hero-pattern {
+            background-color: #0A2540;
+            background-image: radial-gradient(#1E88E5 1px, transparent 1px),
+                              radial-gradient(#1E88E5 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            position: relative;
+        }
+
+        /* Decorative Particles in Hero */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Card Hover Effects */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #1E88E5, #FFC107);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F5F7FA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E88E5;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0A2540;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md shadow-sm transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <img src="https://lh3.googleusercontent.com/d/1VtG4592jnYQOt9Z6Cxbvt3a203Q4TR1c" onerror="this.onerror=null; this.src='logo_2.png';" alt="Fun Physics with Ms. Yuni" class="h-16 w-auto object-contain drop-shadow-md hover:scale-105 transition-transform">
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#home" class="text-navy hover:text-physicsBlue font-semibold transition-colors">Home</a>
+                    <a href="#resources" class="text-navy hover:text-physicsBlue font-semibold transition-colors">Resources</a>
+                    <a href="#topics" class="text-navy hover:text-physicsBlue font-semibold transition-colors">Topics</a>
+                    <a href="#about" class="text-navy hover:text-physicsBlue font-semibold transition-colors">About</a>
+                    <button class="bg-energyRed hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        Student Login
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-navy hover:text-physicsBlue focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-xl absolute w-full">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 text-navy hover:bg-lightGray rounded-md font-semibold">Home</a>
+                <a href="#resources" class="block px-3 py-2 text-navy hover:bg-lightGray rounded-md font-semibold">Resources</a>
+                <a href="#topics" class="block px-3 py-2 text-navy hover:bg-lightGray rounded-md font-semibold">Topics</a>
+                <a href="#about" class="block px-3 py-2 text-navy hover:bg-lightGray rounded-md font-semibold">About</a>
+                <div class="px-3 py-2">
+                    <button class="w-full bg-energyRed text-white px-6 py-2 rounded-full font-bold shadow-md">
+                        Student Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-pattern min-h-screen flex items-center pt-20 relative overflow-hidden">
+        <!-- Abstract Physics Shapes in Background -->
+        <div class="absolute top-1/4 left-10 text-electricYellow opacity-20 text-6xl animate-float">
+            <i class="fa-solid fa-atom"></i>
+        </div>
+        <div class="absolute bottom-1/4 right-10 text-energyRed opacity-20 text-6xl animate-spin-slow">
+            <i class="fa-solid fa-gear"></i>
+        </div>
+        <div class="absolute top-1/3 right-1/4 text-physicsBlue opacity-30 text-4xl animate-float" style="animation-delay: 2s;">
+            <i class="fa-solid fa-magnet"></i>
+        </div>
+        <div class="absolute bottom-1/3 left-1/4 text-white opacity-20 formula-font text-3xl font-bold animate-float" style="animation-delay: 1s;">
+            E=mc²
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <!-- Text Content -->
+                <div class="text-center md:text-left text-white">
+                    <div class="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6 animate-pulse">
+                        <span class="text-electricYellow font-bold tracking-wider text-sm uppercase">
+                            <i class="fas fa-bolt mr-2"></i> New Simulations Added!
+                        </span>
+                    </div>
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-heading font-extrabold leading-tight mb-6">
+                        Making Physics <br>
+                        <span class="text-electricYellow">Simple</span>, 
+                        <span class="text-physicsBlue bg-white px-2 rounded-lg inline-block transform -rotate-2">Visual</span>, <br>
+                        & <span class="text-energyRed">Fun!</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto md:mx-0 font-body">
+                        Dive into the fascinating world of physics with interactive tools, engaging games, and easy-to-understand concepts designed just for you.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <button class="bg-electricYellow hover:bg-yellow-400 text-navy font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center">
+                            Start Learning <i class="fas fa-rocket ml-2"></i>
+                        </button>
+                        <button class="bg-transparent border-2 border-white hover:bg-white hover:text-navy text-white font-bold py-3 px-8 rounded-full transition-all flex items-center justify-center">
+                            Explore Simulations <i class="fas fa-play-circle ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Graphic (Interactive Elements) -->
+                <div class="relative hidden md:block">
+                    <!-- Central visual element representing a nucleus -->
+                    <div class="relative w-80 h-80 mx-auto">
+                        <!-- Orbit 1 -->
+                        <div class="absolute inset-0 border-4 border-dashed border-physicsBlue rounded-full animate-spin-slow"></div>
+                        <!-- Orbit 2 -->
+                        <div class="absolute inset-0 border-4 border-dashed border-energyRed rounded-full animate-spin-slow" style="animation-direction: reverse; transform: rotateX(60deg);"></div>
+                        <!-- Orbit 3 -->
+                        <div class="absolute inset-0 border-4 border-dashed border-electricYellow rounded-full animate-spin-slow" style="transform: rotateY(60deg);"></div>
+                        
+                        <!-- Core (Ms. Yuni Avatar placeholder / Concept art) -->
+                        <div class="absolute inset-0 m-auto w-32 h-32 bg-white rounded-full shadow-[0_0_50px_rgba(30,136,229,0.8)] flex items-center justify-center z-20 overflow-hidden border-4 border-navy">
+                             <img src="https://placehold.co/150x150/0A2540/FFC107?text=Ms.+Yuni" alt="Ms. Yuni" class="w-full h-full object-cover">
+                        </div>
+
+                        <!-- Orbiting 'Electrons' (Icons) -->
+                        <div class="absolute top-0 left-1/2 w-8 h-8 -ml-4 -mt-4 bg-electricYellow rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                            <i class="fas fa-lightbulb text-navy text-xs"></i>
+                        </div>
+                        <div class="absolute bottom-0 right-1/4 w-10 h-10 bg-physicsBlue rounded-full flex items-center justify-center shadow-lg text-white font-bold formula-font text-xs animate-pulse">
+                            F=ma
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wave shape divider at bottom -->
+        <div class="absolute bottom-0 w-full overflow-hidden leading-[0]">
+            <svg class="relative block w-full h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118,130.98,131.7,201,120.91,243.6,114.35,284.14,92.34,321.39,56.44Z" fill="#F5F7FA"></path>
+            </svg>
+        </div>
+    </section>
+
+    <section id="about" class="py-20 bg-lightGray relative">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+                <div class="md:w-1/3 bg-navy p-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <!-- Decorative circuit pattern -->
+                    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+                    
+                    <div class="relative w-40 h-40 mb-6 rounded-full border-4 border-electricYellow overflow-hidden shadow-2xl z-10 bg-white">
+                        <!-- Fallback image, meant to be replaced with actual photo -->
+                        <img src="https://placehold.co/200x200/F5F7FA/0A2540?text=Photo+Here" alt="Ms. Yuni Portrait" class="w-full h-full object-cover">
+                    </div>
+                    <h2 class="text-3xl font-heading font-bold text-white mb-2 z-10">Ms. Yuni</h2>
+                    <p class="text-physicsBlue font-semibold uppercase tracking-wider text-sm z-10">Physics Educator</p>
+                </div>
+                
+                <div class="md:w-2/3 p-10 md:p-16 flex flex-col justify-center">
+                    <div class="flex items-center mb-4">
+                        <span class="w-12 h-1 bg-energyRed rounded-full mr-4"></span>
+                        <h2 class="text-3xl md:text-4xl font-heading font-bold text-navy">Welcome to the Hub!</h2>
+                    </div>
+                    <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                        Hello, explorers of the universe! Welcome to <strong>Fun Physics with Ms. Yuni</strong>. 
+                        I created this space to prove that Physics isn't just about memorizing equations—it's about understanding how everything around us works, from the smallest atoms to the largest galaxies.
+                    </p>
+                    <p class="text-gray-600 text-lg leading-relaxed mb-8">
+                        Here, you will find interactive simulations to visualize abstract concepts, quick revision notes for exams, comprehensive practice questions, and yes, even games! Let's make learning Physics an exciting adventure.
+                    </p>
+                    
+                    <div class="flex items-center text-physicsBlue font-bold">
+                        <i class="fas fa-check-circle mr-2 text-energyRed"></i> Learn
+                        <i class="fas fa-arrow-right mx-3 text-gray-300"></i>
+                        <i class="fas fa-flask mr-2 text-energyRed"></i> Experiment
+                        <i class="fas fa-arrow-right mx-3 text-gray-300"></i>
+                        <i class="fas fa-trophy mr-2 text-energyRed"></i> Master
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="resources" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-heading font-bold text-navy mb-4">Explore Your Resources</h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">Everything you need to master physics concepts, packed into interactive and easy-to-digest formats.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Resource Card 1 -->
+                <div class="bg-lightGray rounded-2xl p-8 hover-lift border-b-4 border-physicsBlue cursor-pointer group">
+                    <div class="w-16 h-16 bg-blue-100 text-physicsBlue rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-navy mb-3">Interactive Simulations</h3>
+                    <p class="text-gray-600 mb-4">Tweak variables, run experiments virtually, and see physics in action without a lab.</p>
+                    <span class="text-physicsBlue font-semibold group-hover:text-navy transition-colors flex items-center">
+                        Launch Lab <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </div>
+
+                <!-- Resource Card 2 -->
+                <div class="bg-lightGray rounded-2xl p-8 hover-lift border-b-4 border-electricYellow cursor-pointer group">
+                    <div class="w-16 h-16 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-navy mb-3">Quick Concept Reviews</h3>
+                    <p class="text-gray-600 mb-4">Short, snappy explanations of core concepts perfect for last-minute refreshing.</p>
+                    <span class="text-yellow-600 font-semibold group-hover:text-navy transition-colors flex items-center">
+                        Review Now <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </div>
+
+                <!-- Resource Card 3 -->
+                <div class="bg-lightGray rounded-2xl p-8 hover-lift border-b-4 border-energyRed cursor-pointer group">
+                    <div class="w-16 h-16 bg-red-100 text-energyRed rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-navy mb-3">Learning Materials</h3>
+                    <p class="text-gray-600 mb-4">Comprehensive chapters, diagrams, and step-by-step guides for deep dives.</p>
+                    <span class="text-energyRed font-semibold group-hover:text-navy transition-colors flex items-center">
+                        Read Chapters <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </div>
+
+                <!-- Resource Card 4 -->
+                <div class="bg-lightGray rounded-2xl p-8 hover-lift border-b-4 border-green-500 cursor-pointer group">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-navy mb-3">Question Bank</h3>
+                    <p class="text-gray-600 mb-4">Test your knowledge with hundreds of categorized practice questions and solutions.</p>
+                    <span class="text-green-600 font-semibold group-hover:text-navy transition-colors flex items-center">
+                        Practice <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </div>
+
+                <!-- Resource Card 5 -->
+                <div class="bg-lightGray rounded-2xl p-8 hover-lift border-b-4 border-purple-500 cursor-pointer group">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-navy mb-3">Revision Notes</h3>
+                    <p class="text-gray-600 mb-4">Downloadable summary sheets with key formulas, definitions, and essential diagrams.</p>
+                    <span class="text-purple-600 font-semibold group-hover:text-navy transition-colors flex items-center">
+                        Get Notes <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </div>
+
+                <!-- Resource Card 6 (Game) -->
+                <div class="bg-navy rounded-2xl p-8 hover-lift border-b-4 border-electricYellow cursor-pointer group relative overflow-hidden">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSI+PC9yZWN0Pgo8Y2lyY2xlIGN4PSIxMCIgY3k9IjEwIiByPSIyIiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMSkiPjwvY2lyY2xlPgo8L3N2Zz4=')] opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-white/20 text-electricYellow rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:rotate-12 transition-transform">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-3">Physics Fun Games</h3>
+                        <p class="text-gray-300 mb-4">Who says learning can't be fun? Apply concepts in puzzle and action games.</p>
+                        <span class="text-electricYellow font-semibold flex items-center animate-pulse">
+                            Play Now <i class="fas fa-play ml-2 text-xs"></i>
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="topics" class="py-20 bg-navy text-white relative">
+        <!-- Background decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-physicsBlue rounded-full mix-blend-multiply filter blur-3xl opacity-50"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-energyRed rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-electricYellow font-bold tracking-wider uppercase text-sm mb-2 block">Curriculum</span>
+                <h2 class="text-4xl md:text-5xl font-heading font-bold mb-4">Choose Your Coursebook</h2>
+                <p class="text-gray-300 text-lg max-w-2xl mx-auto">Master physics at your current level. Select your coursebook to access specialized lessons, syllabus guides, and practice materials.</p>
+            </div>
+
+            <!-- Coursebooks Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Coursebook Item 1 -->
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center hover:bg-white hover:text-navy transition-all duration-300 cursor-pointer hover-lift group">
+                    <div class="w-16 h-20 bg-green-500 rounded-md mx-auto mb-6 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-seedling text-3xl text-white"></i>
+                    </div>
+                    <h4 class="font-bold font-heading text-xl mb-2">Lower Secondary</h4>
+                    <p class="text-sm text-gray-300 group-hover:text-gray-600 mb-4">Building the foundation of science.</p>
+                    <span class="text-electricYellow group-hover:text-physicsBlue font-bold text-sm">Explore <i class="fas fa-arrow-right ml-1"></i></span>
+                </div>
+                
+                <!-- Coursebook Item 2 -->
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center hover:bg-white hover:text-navy transition-all duration-300 cursor-pointer hover-lift group">
+                    <div class="w-16 h-20 bg-physicsBlue rounded-md mx-auto mb-6 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-book-open text-3xl text-white"></i>
+                    </div>
+                    <h4 class="font-bold font-heading text-xl mb-2">IGCSE Physics</h4>
+                    <p class="text-sm text-gray-300 group-hover:text-gray-600 mb-4">Core and Extended syllabus mastery.</p>
+                    <span class="text-electricYellow group-hover:text-physicsBlue font-bold text-sm">Explore <i class="fas fa-arrow-right ml-1"></i></span>
+                </div>
+
+                <!-- Coursebook Item 3 -->
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center hover:bg-white hover:text-navy transition-all duration-300 cursor-pointer hover-lift group">
+                    <div class="w-16 h-20 bg-energyRed rounded-md mx-auto mb-6 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                    </div>
+                    <h4 class="font-bold font-heading text-xl mb-2">AS Level Physics</h4>
+                    <p class="text-sm text-gray-300 group-hover:text-gray-600 mb-4">Advanced concepts and practical skills.</p>
+                    <span class="text-electricYellow group-hover:text-physicsBlue font-bold text-sm">Explore <i class="fas fa-arrow-right ml-1"></i></span>
+                </div>
+
+                <!-- Coursebook Item 4 -->
+                <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center hover:bg-white hover:text-navy transition-all duration-300 cursor-pointer hover-lift group">
+                    <div class="w-16 h-20 bg-purple-500 rounded-md mx-auto mb-6 flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                        <i class="fas fa-university text-3xl text-white"></i>
+                    </div>
+                    <h4 class="font-bold font-heading text-xl mb-2">A Level Physics</h4>
+                    <p class="text-sm text-gray-300 group-hover:text-gray-600 mb-4">Complete mastery for university prep.</p>
+                    <span class="text-electricYellow group-hover:text-physicsBlue font-bold text-sm">Explore <i class="fas fa-arrow-right ml-1"></i></span>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 bg-lightGray border-y border-gray-200 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h3 class="text-2xl font-heading font-bold text-navy mb-4">Interactive Sandbox</h3>
+            <p class="text-gray-600 mb-8">Click and drag inside the box to play with simple gravity!</p>
+            
+            <div class="w-full max-w-3xl mx-auto h-64 bg-white rounded-2xl shadow-inner border-2 border-gray-200 relative overflow-hidden" id="sandbox-container">
+                <!-- Javascript will populate this canvas -->
+                <canvas id="physics-canvas" class="w-full h-full cursor-crosshair"></canvas>
+                <div class="absolute bottom-2 right-2 text-xs text-gray-400 formula-font bg-white/80 px-2 rounded">
+                    g = 9.8 m/s²
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 bg-white relative overflow-hidden">
+        <!-- Decorative background nodes -->
+        <div class="absolute top-10 left-10 text-gray-200 text-9xl opacity-20 animate-pulse"><i class="fas fa-quote-left"></i></div>
+        <div class="absolute bottom-10 right-10 text-gray-200 text-9xl opacity-20"><i class="fas fa-atom"></i></div>
+        
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="bg-lightGray rounded-3xl p-10 md:p-16 shadow-2xl border-l-8 border-electricYellow relative hover-lift">
+                <!-- Floating decorative orb -->
+                <div class="absolute -top-8 -right-8 w-24 h-24 bg-physicsBlue rounded-full opacity-20 animate-pulse-glow"></div>
+                <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-energyRed rounded-full opacity-20 animate-float"></div>
+                
+                <div class="text-center relative z-10">
+                    <h2 class="text-3xl md:text-5xl font-heading font-extrabold text-navy leading-tight mb-8">
+                        "Nothing in life is to be feared, it is only to be understood. Now is the time to understand more, so that we may fear less."
+                    </h2>
+                    <div class="flex items-center justify-center flex-col">
+                        <div class="w-20 h-1 bg-energyRed rounded-full mb-4"></div>
+                        <p class="text-xl font-bold text-navy uppercase tracking-widest">Marie Curie</p>
+                        <p class="text-physicsBlue font-semibold mt-1">Pioneer in Radioactivity & Two-Time Nobel Laureate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-navy pt-16 pb-8 border-t-4 border-physicsBlue">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                <!-- Brand Col -->
+                <div class="col-span-1 md:col-span-1">
+                    <img src="https://lh3.googleusercontent.com/d/1VtG4592jnYQOt9Z6Cxbvt3a203Q4TR1c" onerror="this.onerror=null; this.src='logo_2.png';" alt="Fun Physics" class="h-12 w-auto mb-4 bg-white/10 p-2 rounded-lg">
+                    <p class="text-gray-400 text-sm mb-4">Making Physics Simple, Visual, and Fun. An interactive hub for students to explore the universe's rules.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-physicsBlue transition-colors"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-physicsBlue transition-colors"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-physicsBlue transition-colors"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-white font-bold font-heading mb-4 text-lg">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-physicsBlue"></i>Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-physicsBlue"></i>About Ms. Yuni</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-physicsBlue"></i>All Simulations</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-physicsBlue"></i>Physics Games</a></li>
+                    </ul>
+                </div>
+
+                <!-- Topics -->
+                <div>
+                    <h4 class="text-white font-bold font-heading mb-4 text-lg">Top Topics</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-energyRed"></i>Kinematics</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-energyRed"></i>Thermodynamics</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-energyRed"></i>Electromagnetism</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-electricYellow transition-colors text-sm"><i class="fas fa-chevron-right text-xs mr-2 text-energyRed"></i>Quantum Basics</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact/School -->
+                <div>
+                    <h4 class="text-white font-bold font-heading mb-4 text-lg">Get in Touch</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-physicsBlue mt-1 mr-3"></i>
+                            <span class="text-gray-400 text-sm">hello@funphysicsyuni.edu</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-physicsBlue mt-1 mr-3"></i>
+                            <span class="text-gray-400 text-sm">Science Dept, Room 402<br>Westwood High School</span>
+                        </li>
+                        <li class="mt-4">
+                            <button class="border border-physicsBlue text-physicsBlue hover:bg-physicsBlue hover:text-white px-4 py-2 rounded text-sm transition-colors w-full font-bold">
+                                Contact Form
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 pt-8 text-center flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                    &copy; 2026 Fun Physics with Ms. Yuni. All rights reserved.
+                </p>
+                <div class="flex space-x-4 text-sm text-gray-500">
+                    <a href="#" class="hover:text-white">Privacy Policy</a>
+                    <a href="#" class="hover:text-white">Terms of Use</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.replace('bg-white/90', 'bg-white');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.replace('bg-white', 'bg-white/90');
+            }
+        });
+
+        // Mobile menu toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Simple Physics Sandbox Animation
+        const canvas = document.getElementById('physics-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('sandbox-container');
+
+        // Resize canvas to fit container
+        function resizeCanvas() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        // Initial setup
+        // We use a small timeout to ensure container is rendered before getting dimensions
+        setTimeout(() => {
+            resizeCanvas();
+            initSandbox();
+        }, 100);
+
+        let balls = [];
+        const gravity = 0.5;
+        const friction = 0.8;
+        const colors = ['#1E88E5', '#E53935', '#FFC107', '#0A2540'];
+
+        class Ball {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.dx = (Math.random() - 0.5) * 8; // Random x velocity
+                this.dy = (Math.random() - 0.5) * 8; // Random y velocity
+                this.mass = radius;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+                
+                // Add a small highlight for a 3D effect
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius/3, this.y - this.radius/3, this.radius/4, 0, Math.PI * 2, false);
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            update() {
+                // Apply gravity
+                if (this.y + this.radius + this.dy > canvas.height) {
+                    this.dy = -this.dy * friction; // Bounce and lose energy
+                    this.dy = this.dy; // prevent sinking
+                    this.dx = this.dx * 0.98; // ground friction
+                } else {
+                    this.dy += gravity;
+                }
+
+                // Wall collisions
+                if (this.x + this.radius + this.dx > canvas.width || this.x - this.radius <= 0) {
+                    this.dx = -this.dx * friction;
+                }
+
+                this.x += this.dx;
+                this.y += this.dy;
+
+                this.draw();
+            }
+        }
+
+        function initSandbox() {
+            balls = [];
+            // Create initial balls
+            for (let i = 0; i < 15; i++) {
+                const radius = Math.random() * 15 + 10;
+                const x = Math.random() * (canvas.width - radius * 2) + radius;
+                const y = Math.random() * (canvas.height / 2);
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                balls.push(new Ball(x, y, radius, color));
+            }
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < balls.length; i++) {
+                balls[i].update();
+            }
+        }
+
+        // Interaction: Click to add a ball
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            const radius = Math.random() * 15 + 10;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Add a slight upward velocity when clicked to simulate throwing
+            const newBall = new Ball(mouseX, mouseY, radius, color);
+            newBall.dy = -10; 
+            balls.push(newBall);
+            
+            // Limit number of balls to prevent lag
+            if(balls.length > 50) {
+                balls.shift();
+            }
+        });
+
+        // Add touch support for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling while interacting with canvas
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const mouseX = touch.clientX - rect.left;
+            const mouseY = touch.clientY - rect.top;
+            
+            const radius = Math.random() * 15 + 10;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            const newBall = new Ball(mouseX, mouseY, radius, color);
+            newBall.dy = -10;
+            balls.push(newBall);
+        }, {passive: false});
+
+    </script>
+</body>
+</html>
